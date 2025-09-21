@@ -20,13 +20,13 @@ const changePassword = async (req, res) => {
         });
 
         if (current_password === new_password) return response.sendError({ 
-            message: req.__('Auth.CURRENT_PASSWORD_SAME_AS_NEW_PASSWORD') 
+            message: "New password must be different from current password."
         });
 
         if (user.password != null) {
             const isValidPassword = await bcrypt.compare(current_password, user.password);
             if (!isValidPassword) return response.sendError({
-                message: req.__('Auth.CURRENT_PASSWORD_INCORRECT'),
+                message: "Current password is incorrect.",
             });
             user.password = await bcrypt.hash(confirm_password, 10);
         } else {
@@ -34,12 +34,12 @@ const changePassword = async (req, res) => {
         }
         user.save();
         return response.sendSuccess({
-            message: req.__('Auth.USER_RESET_PASSWORD_SUCCESS'),
+            message: "Password changed successfully.",
         });
 
     } catch (error) {
         return response.sendError({
-            message: req.__('SERVER_ERROR'),
+            message: "Internal server error.",
             error
         });
     }
@@ -57,7 +57,7 @@ const sendTokenToUser = async (req, res) => {
 
         const user = await User.findOne({ email: email });
         if (!user) return response.sendError({
-            message: req.__('Auth.USER_NOT_FOUND'),
+            message: "User not found.",
         });
 
         let token = generateStringToken(32);
@@ -70,14 +70,14 @@ const sendTokenToUser = async (req, res) => {
             open_email_url: await generateGmailSearchUrl(user.email)
         }
         return response.sendSuccess({
-            message: req.__('Auth.LINK_SEND_SUCCESS'),
+            message: "Link sent successfully.",
             data: emailurl
         });
 
 
     } catch (error) {
         return response.sendError({
-            message: req.__('SERVER_ERROR'),
+            message: "Internal server error.",
             error
         });
     }
@@ -93,7 +93,7 @@ const resendEmail = async (req, res) => {
 
         const user = await User.findOne({ email: email });
         if (!user) return response.sendError({
-            message: req.__('Auth.USER_NOT_FOUND'),
+            message: "User not found.",
         });
 
         let token = await generateStringToken(32);
@@ -111,7 +111,7 @@ const resendEmail = async (req, res) => {
         await Verification.create(VerificationData);
 
         return response.sendSuccess({
-            message: req.__('Auth.LINK_SEND_SUCCESS'),
+            message: "Link sent successfully.",
             data: {
                 open_email_url: await generateGmailSearchUrl(user.email)
             },
@@ -120,7 +120,7 @@ const resendEmail = async (req, res) => {
     } catch (error) {
         console.log(error)
         return response.sendError({
-            message: req.__('SERVER_ERROR'),
+            message: "Internal server error.",
             error,
         });
     }
@@ -132,15 +132,15 @@ const verifytoken = async (req, res) => {
         const { token } = req.body;
         const checkOtp = await Verification.findOne({ token ,  action : "reset_password"})
         if (!checkOtp) return response.sendError({
-            message: req.__('Auth.TOKEN_INVALID'),
+            message: "Token is invalid.",
         });
         if (Date.now() > checkOtp.expiresAt) {
-            return response.sendError({ message: req.__('Auth.TOKEN_EXPIRED') });
+            return response.sendError({ message: "Token is expired." });
         }
-        return response.sendSuccess({ message: req.__('Auth.EMAIL_VERIFY_SUCCESS') });
+        return response.sendSuccess({ message: "Token is valid." });
     } catch (error) {
         return response.sendError({
-            message: req.__('SERVER_ERROR'),
+            message: "Internal server error.",
             error
         })
     }
@@ -157,40 +157,40 @@ const resetPassword = async (req, res) => {
             tokenData = await Verification.findOne({ token, type: 'web' , action : "reset_password" });
 
             if (!tokenData) return response.sendError({
-                message: req.__('Auth.TOKEN_INVALID')
+                message: "Auth token is invalid."
             });
 
             if (Date.now() > tokenData.expiresAt) return response.sendError({
-                message: req.__('Auth.TOKEN_EXPIRED')
+                message: "Auth token is expired."
             });
             user = await User.findOne({ email: tokenData.email });
         } else if (type == 'mobile') {
             const tokenData = await Verification.findOne({ email , action : "reset_password"});
             if (!tokenData.token) {
-                return response.sendError({ message: req.__('Auth.TOKEN_INVALID') })
+                return response.sendError({ message:"Token Invalid" })
             }
             if (Date.now() > tokenData.expiresAt) {
-                return response.sendError({ message: req.__('Auth.TOKEN_EXPIRED') })
+                return response.sendError({ message: "Token Expired" })
             }
             user = await User.findOne({ email });
         }
 
-        if (!user) return response.sendError({ message: req.__('Auth.USER_NOT_FOUND') });
+        if (!user) return response.sendError({ message: "User not found." });
 
         user.password = await bcrypt.hash(new_password, 10);
         let updatedUser = user.save();
         if (!updatedUser) return response.sendError({
             statusCode: 500,
-            message: req.__('Auth.PASSWORD_UPDATE_FAILED'),
+            message: "Failed to reset password.",
         });
-        await Verification.findByIdAndDelete(tokenData._id)
+
         return response.sendSuccess({
-            message: req.__('Auth.USER_RESET_PASSWORD_SUCCESS')
+            message: "Password reset successfully.",
         });
 
     } catch (error) {
         return response.sendError({
-            message: req.__('SERVER_ERROR'),
+            message: "Internal server error.",
             error
         })
     }

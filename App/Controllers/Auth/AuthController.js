@@ -150,7 +150,7 @@ const login = async (req, res) => {
         if (!email || !password) {
             return response.sendError({
                 statusCode: 400,
-                message: req.__('Auth.MISSING_CREDENTIALS'),
+                message: "Missing required fields.",
             });
         }
 
@@ -159,11 +159,7 @@ const login = async (req, res) => {
         if (!user) {
             return response.sendError({
                 statusCode: 400,
-                message: req.__('Auth.USER_NOT_FOUND'),
-            });
-        } else if (!user.is_verified) {
-            return response.sendError({
-                message: req.__('Auth.USER_NOT_VERIFY'),
+                message: "User not found.",
             });
         }
 
@@ -171,34 +167,13 @@ const login = async (req, res) => {
             user.password || '');
         if (!validPassword) {
             return response.sendError(
-                { message: AppStrings.EN.Auth.INVALID_PASSWORD });
+                { message: "Invalid credentials." });
         }
         
         const isRemember = is_remember === true || is_remember === 'true';
         const jwt_token = await user.generateAuthToken(isRemember ? '30d' : '24h');
-        const session = new Session({
-            user_id: user._id,
-            token: jwt_token,
-            expires_at: isRemember
-                ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                : new Date(Date.now() + 24 * 60 * 60 * 1000),
-        });
-        await session.save();
+    
 
-        if (fcm_token?.length > 0) {
-            await FcmToken.findOneAndUpdate(
-                { user_id: user._id.toString() },
-                {
-                    type: req.type,
-                    token: fcm_token,
-                    user_id: user._id.toString(),
-                },
-                {
-                    upsert: true,
-                    new: true,
-                },
-            );
-        }
 
         const lastLogin = new Date();
         await User.findByIdAndUpdate(user._id, { last_login_at: lastLogin },
@@ -215,13 +190,13 @@ const login = async (req, res) => {
         };
 
         return response.sendSuccess({
-            message: req.__('Auth.USER_LOGIN_SUCCESS'),
+            message: "logged in successfully.",
             data: userData,
         });
     } catch (error) {
         console.log(error);
         return response.sendError({
-            message: req.__('SERVER_ERROR'),
+            message: "internal server error.",
             error,
         });
     }
@@ -231,24 +206,17 @@ const logout = async (req, res) => {
     const response = new Response(req, res);
     const { userId, module } = req;
     try {
-        if (module === MODULES.USER) {
             const token = req.header('Authorization')?.replace('Bearer ', '');
-            const user = await Session.findOne({ user_id: userId, token: token });
-
-            if (!user) {
-                return response.sendError(
-                    { message: req.__('Auth.TOKEN_INVALID') });
-            }
-            await Session.deleteOne({ user_id: userId, token: token });
-        }
+    
+        
 
         return response.sendSuccess({
-            message: req.__('Auth.USER_LOGOUT_SUCCESS'),
+            message: "Logged out successfully.",
         });
     } catch (error) {
         console.log(error);
         return response.sendError({
-            message:  req.__('SERVER_ERROR'),
+            message:  "Internal server error.",
             error: error.message,
         });
     }
@@ -261,24 +229,16 @@ const logoutAllDevice = async (req, res) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
 
         if (!token) {
-            return response.sendError({ message: req.__('Auth.TOKEN_INVALID') });
+            return response.sendError({ message: "Token is required." });
         }
-        const userSession = await Session.findOne({
-            user_id: userId, token: token,
-        });
-
-        if (!userSession) {
-            return response.sendError({ message: req.__('Auth.TOKEN_INVALID') });
-        }
-        await Session.deleteMany({ user_id: userId });
-
+        
         return response.sendSuccess({
-            message: req.__('Auth.USER_LOGOUT_ALL_SUCCESS'),
+            message:" Logged out from all devices successfully.",
         });
     } catch (error) {
         console.log(error);
         return response.sendError({
-            message:  req.__('SERVER_ERROR'),
+            message:  "Internal server error.",
             error: error.message,
         });
     }
@@ -294,7 +254,7 @@ const resendEmail = async (req, res) => {
 
         const user = await User.findOne({ email: email });
         if (!user) return response.sendError({
-            message: req.__('Auth.USER_NOT_FOUND'),
+            message: "User not found.",
         });
 
         let token = await generateStringToken(32);
@@ -315,7 +275,7 @@ const resendEmail = async (req, res) => {
         await Verification.create(VerificationData);
 
         return response.sendSuccess({
-            message: req.__('LINK_SEND_SUCCESS'),
+            message: "Verification Link sent successfully.",
             data: {
                 open_email_url: await generateGmailSearchUrl(user.email),
             },
@@ -323,7 +283,7 @@ const resendEmail = async (req, res) => {
 
     } catch (error) {
         return response.sendError({
-            message: req.__('SERVER_ERROR'),
+            message: "Internal server error.",
             error,
         });
     }
@@ -340,14 +300,14 @@ const verifyUserAccount = async (req, res) => {
         if (!checkToken) {
             return response.sendError({
                 statusCode: 400,
-                message: req.__ ('Auth.TOKEN_INVALID'),
+                message: "Auth token is invalid.",
             });
         }
 
         if (Date.now() > checkToken.expiresAt) {
             return response.sendError({
                 statusCode: 400,
-                message: req.__('Auth.LINK_EXPIRED'),
+                message: "Auth token is expired.",
             });
         }
 
@@ -359,18 +319,18 @@ const verifyUserAccount = async (req, res) => {
         if (!user) {
             return response.sendError({
                 statusCode: 409,
-                   message: req.__('Auth.USER_NOT_FOUND'),
+                   message: "User not found.",
             });
         }
         await Verification.findByIdAndDelete(checkToken._id);
         return response.sendSuccess({
             statusCode: 200,
-            message: req.__('Auth.EMAIL_VERIFY_SUCCESS'),
+            message: "User verified successfully.",
         });
     } catch (error) {
         return response.sendError({
             statusCode: 500,
-            message: req.__('SERVER_ERROR'),
+            message: "Internal server error.",
             error,
         });
     }
@@ -512,89 +472,7 @@ const userPages = async (req, res) => {
     }
 };
 
-const switchPages = async (req, res) => {
-    const response = new Response(req, res);
-    const { superUserId, body: { page_id, module } } = req;
 
-    try {
-        if (!module || !page_id) return response.sendError({
-            error: 'Both page_id and module are required to switch pages.',
-        });
-
-        const moduleToModelMap = {
-            [MODULES.USER]: model('User'),
-            [MODULES.BUSINESS]: model('Business'),
-            [MODULES.INSTITUTE]: model('Institute'),
-        };
-
-        const pageModel = moduleToModelMap[module];
-        if (!pageModel) return response.sendError({
-            error: 'Invalid module specified.',
-        });
-
-        const queryCondition = module === MODULES.USER
-            ? { _id: superUserId }
-            : { user_id: superUserId, _id: page_id };
-
-        const foundPage = await pageModel.exists(queryCondition);
-        const modelData = await pageModel.aggregate([
-            {
-              $match: {
-                  _id: new mongoose.Types.ObjectId(page_id),
-              },  
-            },
-            {
-                $lookup: {
-                    from: 'suspend_pages',
-                    localField: '_id',
-                    foreignField: 'module_id',
-                    as: 'suspend_pages',
-                },
-            },
-            {
-                $addFields: {
-                    is_suspend: { $gt: [{ $size: '$suspend_pages' }, 0] },
-                },
-            },
-        ]);
-        
-        if(modelData && modelData[0]?.is_suspend){
-            return response.sendError({
-                message: 'Your account has been suspended. Please contact to admin for more information.',
-                statusCode: 403,
-            });
-        }
-        
-        if (!foundPage) return response.sendError({
-              message: req.__('Auth.PAGE_NOT_FOUND', { module }),
-        });
-        const token = jwt.sign(
-            { uid: page_id, module },
-            process.env.JWT_PRIVATE_KEY,
-            {
-                expiresIn: '24h',
-            });
-
-        if (module === MODULES.USER) {
-            const session = new Session({
-                user_id: superUserId,
-                token,
-            });
-            await session.save();
-        }
-
-        return response.sendSuccess({
-            message: req.__('Auth.PAGE_SWITCH_SUCCESS'),
-            data: { token },
-        });
-    } catch (error) {
-        console.error('Error in switchPages:', error);
-        return response.sendError({
-            message : req._("SERVER_ERROR"),
-            error: error.message || 'An unexpected error occurred.',
-        });
-    }
-};
 
 export default {
     register,
@@ -605,5 +483,4 @@ export default {
     logoutAllDevice,
     checkUserIsAuthenticate,
     userPages,
-    switchPages,
 };

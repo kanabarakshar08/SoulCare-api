@@ -7,6 +7,7 @@ import Response from './App/utils/response.js';
 // import handleSocket from './App/Services/Socket.js';
 import errorHandler from './App/Exceptions/Handler.js';
 import models from './App/Models/EloquentCollection.js';
+import { mailConfiguration } from './App/Services/Email/Configuration.js';
 const app = express();
 
 
@@ -18,7 +19,7 @@ errorHandler();
 
 // Global utilities
 global.Response = Response;
-global.adminContactEmail = ""
+global.mailConfiguration = mailConfiguration;
 
 // const { server, io } = await handleSocket(app);
 

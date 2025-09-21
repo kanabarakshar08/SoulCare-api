@@ -27,6 +27,32 @@ export const UserSchema = new Schema(
             enum: ['patient', 'doctor', 'admin'],
             default: 'patient',
         },
+        profile: {
+            dateOfBirth: Date,
+            gender: {
+                type: String,
+                enum: ['male', 'female', 'other']
+            },
+            phone: String,
+            address: {
+                street: String,
+                city: String,
+                state: String,
+                zipCode: String
+            },
+            specialization: { // For doctors
+                type: String
+            },
+            qualifications: { // For doctors
+                type: [String]
+            },
+            yearsOfExperience: { // For doctors
+                type: Number
+            },
+            healthConditions: { // For patients
+                type: [String]
+            }
+        },
         is_verified: {
             type: Boolean,
             default: false,
@@ -43,8 +69,8 @@ export const UserSchema = new Schema(
 
 UserSchema.methods.generateAuthToken = function (expiresIn = '24h') {
     return jwt.sign(
-        { 
-            uid: this._id, 
+        {
+            uid: this._id,
             is_admin: this.is_admin,
             role: this.role,
             email: this.email

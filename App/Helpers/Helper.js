@@ -1,5 +1,6 @@
 import mongoose, { model } from 'mongoose';
 import moment from 'moment';
+import Profile from '../Models/Profile.js';
 import crypto from 'crypto';
 import db from '../Database/db.js';
 import User from '../Models/User.js';

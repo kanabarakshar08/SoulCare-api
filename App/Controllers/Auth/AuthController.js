@@ -1,16 +1,17 @@
 import mongoose, { model } from 'mongoose';
 import bcrypt from 'bcrypt';
 import User from '../../Models/User.js';
+import Profile from '../../Models/Profile.js';
 import { encrypt } from '../../Helpers/encryption.js';
-// import {
-//     validateLogin,
-//     validateRegister,
-//     validateDoctorRegister,
-//     validateAdminRegister,
-//     validateEmail,
-//     validatePasswordReset,
-//     validateProfileUpdate
-// } from '../../Request/UserRequest.js';
+import {
+    validateLogin,
+    validateRegister,
+    validateDoctorRegister,
+    validateAdminRegister,
+    validateEmail,
+    validatePasswordReset,
+    validateProfileUpdate
+} from '../../Request/UserRequest.js';
 import {
     expirationTime,
     generateGmailSearchUrl,
@@ -48,7 +49,7 @@ const register = async (req, res) => {
         if (await User.exists({ email })) {
             return response.sendError({
                 statusCode: 409,
-                message: req.__('Auth.EMAIL_EXISTS'),
+                message: 'Email already in use.',
             });
         }
 
@@ -63,29 +64,17 @@ const register = async (req, res) => {
         const [first_name, last_name] = name.trim().split(' ');
         input.first_name = first_name;
         if (last_name) input.last_name = last_name;
-        const user = await User.create([input], { session });
+        const user = await User.create([input]);
 
         let user_name;
-        let isUnique = false;
-
-        while (!isUnique) {
-            const generatedName = generateUniqueUserName(first_name, last_name);
-            const exists = await Profile.exists({ user_name: generatedName });
-            if (!exists) {
-                user_name = generatedName;
-                isUnique = true;
-            }
-        }
+    
         const profile = {
             _id: user[0]._id,
-            user_name,
+            user_name: user_name = `${first_name.toLowerCase()}${last_name ? '.' + last_name.toLowerCase() : ''}${Math.floor(1000 + Math.random() * 9000)}`,
         };
         const setting = {
             _id: user[0]._id,
-            linked_accounts: {
-                google: 0,
-                facebook: 0,
-            },
+
             // Additional settings based on role
             ...(role === 'doctor' && {
                 specialization,
@@ -97,37 +86,11 @@ const register = async (req, res) => {
                 department
             })
         };
-        const defaultVisibility = {
-            module_id: user[0]._id,
-            module_type: 'user',
-            visibility: {
-                profile_photo: VISIBILITY.Anyone,
-                skills: VISIBILITY.Anyone,
-                about_me: VISIBILITY.Anyone,
-                educations: VISIBILITY.Anyone,
-                contact_details: VISIBILITY.Anyone,
-                work_experience: VISIBILITY.Anyone,
-                languages: VISIBILITY.Anyone,
-                projects: VISIBILITY.Anyone,
-                achievements: VISIBILITY.Anyone,
-            },
-        };
+       
 
-        await Profile.create([profile], { session });
-        await Setting.create([setting], { session });
-        await Visibility.create([defaultVisibility], { session });
+        await Profile.create([profile]);
         let verifyToken = await generateStringToken(32);
         let expiresAt = await expirationTime();
-
-
-        const verifications = new Verification({
-            token: verifyToken,
-            user_id: user[0]._id,
-            email: input.email,
-            expiresAt,
-            type,
-            action: 'register',
-        });
 
         const { error } = await WelcomeSendEmail(email, type, verifyToken,
             `${user[0]?.first_name} ${user[0]?.last_name !== null
@@ -135,14 +98,8 @@ const register = async (req, res) => {
                 : ''}`);
         if (error) throw error;
 
-        await Verification.create(verifications);
         const jwt_token = await user[0].generateAuthToken();
-        const session = new Session({
-            user_id: user[0]._id,
-            token: jwt_token,
-        });
-        await session.save();
-
+        
         await session.commitTransaction();
         await session.endSession();
 
@@ -159,7 +116,7 @@ const register = async (req, res) => {
         };
         return response.sendSuccess({
             statusCode: 201,
-            message: req.__('Auth.USER_REGISTER_SUCCESS'),
+            message: 'registered successfully.',
             data: userData,
         });
 
@@ -170,7 +127,7 @@ const register = async (req, res) => {
 
         return response.sendError({
             statusCode: 500,
-            message: req.__('SERVER_ERROR'),
+            message: 'internal server error.',
             error,
         });
     }

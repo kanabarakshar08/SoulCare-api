@@ -1,8 +1,7 @@
 import 'dotenv/config';
-import { emailApi } from './Configuration.js';
 
 export const ResetPassword = async (type, token, to, name) => {
-    return await emailApi.sendTransacEmail({
+    return await mailConfiguration.sendMail({
         sender: { name: 'Connester', email: process.env.BREVO_USER},
         to: [{ email: to, name}],
         subject: 'Password Reset Request',

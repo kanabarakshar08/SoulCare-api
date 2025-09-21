@@ -1,8 +1,11 @@
-import SibApiV3Sdk from 'sib-api-v3-sdk';
+import nodemailer from 'nodemailer';
 
-const client = SibApiV3Sdk.ApiClient.instance;
-client.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
-
-const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
-
-export { emailApi, SibApiV3Sdk };
+export const mailConfiguration = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: true,
+    auth: {
+        user: process.env.EMAIL_AUTH_USER,
+        pass: process.env.EMAIL_AUTH_PASSWORD,
+    },
+});

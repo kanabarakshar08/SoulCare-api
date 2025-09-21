@@ -14,26 +14,15 @@ import { ROLES } from '../utils/Enum.js';
         }
 
         const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-        const session = await Session.findOne({ 
-            user_id: decoded.userId, 
-            token: token 
-        });
 
-        if (!session) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid token or session expired.'
-            });
-        }
-
-        const user = await User.findById(decoded.userId);
+        const user = await User.findById(decoded.uid);
         if (!user) {
             return res.status(401).json({
                 success: false,
                 message: 'User not found.'
             });
         }
-
+    
         req.userId = user._id;
         req.user = user;
         next();

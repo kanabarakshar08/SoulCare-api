@@ -1,0 +1,8 @@
+/node_modules
+/public/uploads
+.package-lock.json
+.vscode/settings.json
+.env
+
+.early.coverage
+package-lock.json

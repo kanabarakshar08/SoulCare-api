@@ -1,0 +1,1231 @@
+{
+	"info": {
+		"_postman_id": "soulcare-api-collection",
+		"name": "SoulCare API Collection",
+		"description": "Complete API collection for SoulCare mental health platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "soulcare-api"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register Patient",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"patient@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+1234567890\",\n  \"role\": \"patient\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/signup",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "signup"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Doctor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Dr. Jane Smith\",\n  \"email\": \"doctor@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+1234567890\",\n  \"role\": \"doctor\",\n  \"specialization\": \"Clinical Psychology\",\n  \"license_number\": \"PSY123456\",\n  \"experience_years\": 5,\n  \"bio\": \"Experienced therapist specializing in anxiety and depression\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/signup",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "signup"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+1234567890\",\n  \"role\": \"admin\",\n  \"department\": \"Mental Health\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/signup",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "signup"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"patient@example.com\",\n  \"password\": \"password123\",\n  \"is_remember\": false,\n  \"fcm_token\": \"optional_fcm_token\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "logout"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AI ChatBot",
+			"item": [
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"I've been feeling really anxious lately about work and relationships\",\n  \"session_id\": \"optional_session_id\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/chatbot/send-message",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chatbot", "send-message"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Conversation History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/chatbot/conversation/{{session_id}}?limit=50",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chatbot", "conversation", "{{session_id}}"],
+							"query": [
+								{
+									"key": "limit",
+									"value": "50"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Sessions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/chatbot/sessions?page=1&limit=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chatbot", "sessions"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start New Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/chatbot/start-session",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chatbot", "start-session"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "End Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/chatbot/end-session/{{session_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chatbot", "end-session", "{{session_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Insights",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/chatbot/insights",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chatbot", "insights"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Therapy Management",
+			"item": [
+				{
+					"name": "Create Therapy (Doctor)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{doctor_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Cognitive Behavioral Therapy\",\n  \"description\": \"Evidence-based therapy for anxiety and depression\",\n  \"category\": \"cognitive_behavioral\",\n  \"duration_minutes\": 60,\n  \"price\": 150.00,\n  \"currency\": \"USD\",\n  \"is_online\": true,\n  \"is_in_person\": true,\n  \"max_participants\": 1,\n  \"requirements\": [\"Initial consultation required\"],\n  \"benefits\": [\"Reduced anxiety\", \"Better coping skills\"],\n  \"tags\": [\"anxiety\", \"depression\", \"cbt\"],\n  \"availability\": {\n    \"monday\": [{\"start_time\": \"09:00\", \"end_time\": \"17:00\", \"is_available\": true}],\n    \"tuesday\": [{\"start_time\": \"09:00\", \"end_time\": \"17:00\", \"is_available\": true}],\n    \"wednesday\": [{\"start_time\": \"09:00\", \"end_time\": \"17:00\", \"is_available\": true}],\n    \"thursday\": [{\"start_time\": \"09:00\", \"end_time\": \"17:00\", \"is_available\": true}],\n    \"friday\": [{\"start_time\": \"09:00\", \"end_time\": \"17:00\", \"is_available\": true}]\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/therapy",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Therapies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/therapy?page=1&limit=10&category=cognitive_behavioral&is_online=true&sort_by=rating&sort_order=desc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "category",
+									"value": "cognitive_behavioral"
+								},
+								{
+									"key": "is_online",
+									"value": "true"
+								},
+								{
+									"key": "sort_by",
+									"value": "rating"
+								},
+								{
+									"key": "sort_order",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Therapy by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/therapy/{{therapy_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy", "{{therapy_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Therapy (Doctor)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{doctor_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated CBT Therapy\",\n  \"description\": \"Updated description\",\n  \"price\": 175.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/therapy/{{therapy_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy", "{{therapy_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Therapy (Doctor)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{doctor_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/therapy/{{therapy_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy", "{{therapy_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Doctor's Therapies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{doctor_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/therapy/doctor/{{doctor_id}}?page=1&limit=10&is_active=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy", "doctor", "{{doctor_id}}"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "is_active",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Therapies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/therapy/search?q=anxiety&category=cognitive_behavioral&min_price=100&max_price=200&is_online=true&page=1&limit=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy", "search"],
+							"query": [
+								{
+									"key": "q",
+									"value": "anxiety"
+								},
+								{
+									"key": "category",
+									"value": "cognitive_behavioral"
+								},
+								{
+									"key": "min_price",
+									"value": "100"
+								},
+								{
+									"key": "max_price",
+									"value": "200"
+								},
+								{
+									"key": "is_online",
+									"value": "true"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Therapy Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/therapy/categories",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy", "categories"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rate Therapy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/therapy/{{therapy_id}}/rate",
+							"host": ["{{base_url}}"],
+							"path": ["api", "therapy", "{{therapy_id}}", "rate"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointment Booking",
+			"item": [
+				{
+					"name": "Book Appointment (Patient)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patient_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"doctor_id\": \"{{doctor_id}}\",\n  \"therapy_id\": \"{{therapy_id}}\",\n  \"appointment_date\": \"2024-01-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"session_type\": \"online\",\n  \"notes\": \"First session\",\n  \"patient_notes\": \"Feeling anxious about work\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/appointments/book",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "book"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patient Appointments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patient_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/patient?page=1&limit=10&status=scheduled&upcoming=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "patient"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "scheduled"
+								},
+								{
+									"key": "upcoming",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Doctor Appointments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{doctor_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/doctor/schedule?page=1&limit=10&status=scheduled&date=2024-01-15",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "doctor", "schedule"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "scheduled"
+								},
+								{
+									"key": "date",
+									"value": "2024-01-15"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Appointment by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "{{appointment_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Appointment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"Schedule conflict\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/appointments/{{appointment_id}}/cancel",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "{{appointment_id}}", "cancel"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Appointment Status (Doctor)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{doctor_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"completed\",\n  \"doctor_notes\": \"Session went well, patient showed improvement\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/appointments/{{appointment_id}}/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "{{appointment_id}}", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Available Time Slots",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/appointments/available-slots?doctorId={{doctor_id}}&date=2024-01-15&duration=60",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "available-slots"],
+							"query": [
+								{
+									"key": "doctorId",
+									"value": "{{doctor_id}}"
+								},
+								{
+									"key": "date",
+									"value": "2024-01-15"
+								},
+								{
+									"key": "duration",
+									"value": "60"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rate Appointment (Patient)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patient_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": 5,\n  \"feedback\": \"Great session, very helpful\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/appointments/{{appointment_id}}/rate",
+							"host": ["{{base_url}}"],
+							"path": ["api", "appointments", "{{appointment_id}}", "rate"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contact Support",
+			"item": [
+				{
+					"name": "Submit Contact Form (Public)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+1234567890\",\n  \"subject\": \"Appointment Help\",\n  \"message\": \"I need help booking an appointment with Dr. Smith\",\n  \"category\": \"appointment_help\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contact/submit",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "submit"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Contacts (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contact?page=1&limit=10&status=new&priority=high&category=appointment_help&search=appointment",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "new"
+								},
+								{
+									"key": "priority",
+									"value": "high"
+								},
+								{
+									"key": "category",
+									"value": "appointment_help"
+								},
+								{
+									"key": "search",
+									"value": "appointment"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact by ID (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contact/{{contact_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "{{contact_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Contact (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"staff_id\": \"{{staff_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contact/{{contact_id}}/assign",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "{{contact_id}}", "assign"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Respond to Contact (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"response_text\": \"Thank you for contacting us. I'll help you book an appointment with Dr. Smith. Please let me know your preferred time.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contact/{{contact_id}}/respond",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "{{contact_id}}", "respond"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Contact Status (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"resolved\",\n  \"priority\": \"medium\",\n  \"tags\": [\"appointment\", \"resolved\"],\n  \"follow_up_required\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contact/{{contact_id}}/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "{{contact_id}}", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Close Contact (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contact/{{contact_id}}/close",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "{{contact_id}}", "close"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact Statistics (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contact/statistics?start_date=2024-01-01&end_date=2024-01-31",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "statistics"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-01-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contact/categories",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "categories"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Contacts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contact/user?page=1&limit=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contact", "user"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment Processing",
+			"item": [
+				{
+					"name": "Create Payment Intent (Patient)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patient_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"appointment_id\": \"{{appointment_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/create-intent",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "create-intent"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Payment (Patient)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patient_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"payment_intent_id\": \"pi_1234567890abcdef\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/confirm",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "confirm"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment History (Patient)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patient_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/payments/history?page=1&limit=10&status=paid",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "history"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "paid"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refund Payment (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"appointment_id\": \"{{appointment_id}}\",\n  \"reason\": \"Patient cancellation\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/refund",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "refund"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Statistics (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/payments/statistics?start_date=2024-01-01&end_date=2024-01-31",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "statistics"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-01-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stripe Webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Stripe-Signature",
+								"value": "t=1234567890,v1=signature_here"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"evt_1234567890\",\n  \"object\": \"event\",\n  \"type\": \"payment_intent.succeeded\",\n  \"data\": {\n    \"object\": {\n      \"id\": \"pi_1234567890abcdef\",\n      \"object\": \"payment_intent\",\n      \"status\": \"succeeded\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/webhook",
+							"host": ["{{base_url}}"],
+							"path": ["api", "payments", "webhook"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doctor_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "session_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "therapy_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "appointment_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "contact_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doctor_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "staff_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
